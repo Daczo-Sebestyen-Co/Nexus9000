@@ -26,7 +26,7 @@ while True:
         for col in columns:
             if col.value():
                 button[1] = columns.index(col)
-
+                
                 for lay in layers:
                     if lay.value():
                         button[2] = layers.index(lay)
@@ -37,13 +37,20 @@ while True:
                         if deactivate in pressed:
                             pressed.pop(pressed.index(deactivate))
                             deactivate = [0,0,0]
-            else:
-                for lay in layers:
-                    deactivate[1] = columns.index(col)
-                    deactivate[2] = layers.index(lay)
-                    if deactivate in pressed:
-                        pressed.pop(pressed.index(deactivate))
-                        deactivate = [0,0,0]
+        """for row in rows:
+            button[0] = rows.index(row)
+            deactivate[0] = rows.index(row)
+            makeNull(rows)
+            row.value(1)
+            for col in columns: 
+                deactivate[1] = columns.index(col)
+                if not col.value():
+                    for lay in layers:
+                        if not lay.value():
+                            deactivate[2] = layers.index(lay)
+                            if deactivate in pressed:
+                                pressed.pop(pressed.index(deactivate))
+        """
             
         print(pressed)
 
