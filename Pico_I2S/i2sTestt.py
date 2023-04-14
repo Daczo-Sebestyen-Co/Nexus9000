@@ -12,7 +12,7 @@ def make_tone(rate, bits, frequency):
     sample_size_in_bytes = bits // 8
     samples = bytearray(samples_per_cycle * sample_size_in_bytes)
     
-    volume_reduction_factor = 1
+    volume_reduction_factor = 2
     rangee = pow(2, bits) // 2 // volume_reduction_factor
     
     if bits == 16:
@@ -23,7 +23,7 @@ def make_tone(rate, bits, frequency):
     for i in range(samples_per_cycle):
         sample = rangee + int((rangee - 1) * math.sin(2 * math.pi * i / samples_per_cycle))
         struct.pack_into(format, samples, i * sample_size_in_bytes, sample)
-        print(i, "\t", sample, "\t", samples[i*2-2], "\t", samples[i*2-1])
+        #print(i, "\t", sample, "\t", samples[i*2-2], "\t", samples[i*2-1])
 
         
     return samples

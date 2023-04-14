@@ -1,4 +1,4 @@
-from . import osc
+import osc
 from machine import I2S, Pin
 
 # I2S Pins
@@ -19,10 +19,10 @@ audio_out = I2S(pcm_id,sck=Pin(pcm_bck),ws=Pin(pcm_lrc),sd=Pin(pcm_din),mode=I2S
 
 
 osc.audio_setup(sample_rate, bit_res)
-OSC0 = [0,100,0]
+OSC0 = [2,100,0]
 OSC1 = [0,0,0]
 OSCs = [OSC0]
-fr = [5000]
+fr = [400]
 samples = osc.OSC(OSCs, fr)
 
 print("==========  START PLAYBACK ==========")

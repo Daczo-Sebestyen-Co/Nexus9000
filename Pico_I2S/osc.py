@@ -7,7 +7,6 @@ byte_res = 0
 step_ratio = math.pow(2, 1/12)
 
 
-
 def audio_setup(Sample_rate, Bit_res):
     global sample_rate
     global bit_res
@@ -65,7 +64,7 @@ def OSC(OSCs, Fr):
     fr = Fr
     global sample_number        # How many samples are going to be generated
     simples = []                # Holding the samples in an array
-    samples_number = sample_rate // 5000 #math.lcm(fr) 
+    samples_number = sample_rate // 400 #math.lcm(fr) 
     samples = bytearray(samples_number * byte_res)  # This will hold the samples in byte array
     for s in range(samples_number):                 # Generating a sample
         for i in range(len(OSCs)):                  # Goes through the oscillators
@@ -79,6 +78,8 @@ def OSC(OSCs, Fr):
                 sample += tri_osc(osc[1],osc[2])       # ---||---
             elif wave_form == 3 :
                 sample += saw_osc(osc[1],osc[2])       # ---||---
+        rangee = pow(2, bit_res) // 2                  # The range of the maximum sample value in the byte array
+        sample = rangee + int((rangee - 1) * (sample/100))
         simples.append(int(sample))                 # Adding the sample to the array
         struct.pack_into("<h", samples, byte_res, sample)
         sample = 0                                  # Clear the sample value for the next round
