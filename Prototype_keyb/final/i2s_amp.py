@@ -16,6 +16,7 @@ import math
 import struct
 from machine import I2S
 from machine import Pin
+import theSignal
 
 def make_tone(rate, bits, frequency):
     # create a buffer containing the pure tone samples
@@ -67,13 +68,16 @@ audio_out = I2S(
     ibuf=BUFFER_LENGTH_IN_BYTES,
 )
 
-samples = make_tone(SAMPLE_RATE_IN_HZ, SAMPLE_SIZE_IN_BITS, TONE_FREQUENCY_IN_HZ)
 
 # continuously write tone sample buffer to an I2S DAC
 print("==========  START PLAYBACK ==========")
 try:
     while True:
-        num_written = audio_out.write(samples)
+        s = theSignal.getFreq()
+        print(s[1])
+        if s[1] != None:
+            samples = make_tone(SAMPLE_RATE_IN_HZ, SAMPLE_SIZE_IN_BITS, float(s[1]))
+            num_written = audio_out.write(samples)
 
 except (KeyboardInterrupt, Exception) as e:
     print("caught exception {} {}".format(type(e).__name__, e))

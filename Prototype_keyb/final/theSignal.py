@@ -29,7 +29,7 @@ def getNote(n, faze):
 
 pressed = []
 
-while True:
+def getFreq():
     button = [0,0,0]
     deactivate = [0,0,0]
     for row in rows:
@@ -59,4 +59,5 @@ while True:
                         pressed.pop(pressed.index(deactivate))
             
         #print(pressed)
-        if len(pressed) > 0: print(getNote(pressed[-1], -9))
+        if len(pressed) > 0: return list(getNote(pressed[-1], -9))
+        else: return list(['', None])
