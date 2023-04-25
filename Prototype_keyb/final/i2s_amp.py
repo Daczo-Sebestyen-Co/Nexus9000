@@ -34,7 +34,7 @@ def make_tone(rate, bits, frequency):
     for i in range(samples_per_cycle):
         sample = range + int((range - 1) * math.sin(2 * math.pi * i / samples_per_cycle))
         struct.pack_into(format, samples, i * sample_size_in_bytes, sample)
-        print(samples)
+        #print(samples)
         
     return samples
 
@@ -74,9 +74,10 @@ print("==========  START PLAYBACK ==========")
 try:
     while True:
         s = theSignal.getFreq()
-        print(s[1])
-        if s[1] != None:
-            samples = make_tone(SAMPLE_RATE_IN_HZ, SAMPLE_SIZE_IN_BITS, float(s[1]))
+        #print(s, type(s))
+        if s != None and s[1] != None:
+            print(s[1], float(s[1]))
+            samples = make_tone(SAMPLE_RATE_IN_HZ, SAMPLE_SIZE_IN_BITS, int(float(s[1])))
             num_written = audio_out.write(samples)
 
 except (KeyboardInterrupt, Exception) as e:
