@@ -1,5 +1,6 @@
 import machine
 import time
+import math
 
 rows = [machine.Pin(4, machine.Pin.OUT), machine.Pin(5, machine.Pin.OUT)]
 columns = [machine.Pin(6, machine.Pin.IN, machine.Pin.PULL_DOWN), machine.Pin(7, machine.Pin.IN, machine.Pin.PULL_DOWN), machine.Pin(8, machine.Pin.IN, machine.Pin.PULL_DOWN)]
@@ -9,23 +10,12 @@ def makeNull(l):
     for e in l:
         e.value(0)
 
-f = open("noteHz.txt", "r")
-lines = f.readlines()
-
-data = []
-for line in lines:
-    s = line.split()
-    data.append([s[0], s[1]])
-
-zeroth = 0
-for e in data:
-    if e[0] == "A4":
-        zeroth = data.index(e)
-        break
-
 def getNote(n, faze):
     key = n[0] * 6 + n[1] + n[2] * 3 + faze
-    return data[zeroth + key]
+    print(key, int(440 * ((2 ** (1/12)) ** key)))
+    return 440 * 2 ** 1/12 ** (key)
+
+#getNote([0, 0, 1], -9)
 
 pressed = []
 
@@ -59,5 +49,7 @@ def getFreq():
                         pressed.pop(pressed.index(deactivate))
             
         #print(pressed)
+        print(pressed[-1])
         if len(pressed) > 0: return getNote(pressed[-1], -9)
-        #else: return ['', None]
+        else: return None
+
