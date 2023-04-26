@@ -75,7 +75,7 @@ try:
     while True:
         s = theSignal.getFreq()
         #print(s, type(s))
-        print(s)
+        if s != None: print("_", int(float(s)))
         if s != None:
             samples = make_tone(SAMPLE_RATE_IN_HZ, SAMPLE_SIZE_IN_BITS, int(float(s)))
             num_written = audio_out.write(samples)

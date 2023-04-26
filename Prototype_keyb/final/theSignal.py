@@ -13,7 +13,7 @@ def makeNull(l):
 def getNote(n, faze):
     key = n[0] * 6 + n[1] + n[2] * 3 + faze
     print(key, int(440 * ((2 ** (1/12)) ** key)))
-    return 440 * 2 ** 1/12 ** (key)
+    return int(440 * ((2 ** (1/12)) ** key))
 
 #getNote([0, 0, 1], -9)
 
@@ -49,7 +49,7 @@ def getFreq():
                         pressed.pop(pressed.index(deactivate))
             
         #print(pressed)
-        print(pressed[-1])
+        #print(pressed[-1])
         if len(pressed) > 0: return getNote(pressed[-1], -9)
         else: return None
 
