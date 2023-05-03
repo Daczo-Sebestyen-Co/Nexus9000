@@ -28,7 +28,7 @@ def sin_osc(freq, amplitude):
     sample_points = sample_rate // freq
     sample_bytes = bit_res // 8
     samples = bytearray(sample_points * sample_bytes)
-    value_range = pow(2, bit_res) // 2 // (64*8) 
+    value_range = pow(2, bit_res) // 2  #// (64*8) 
 
     for i in range(sample_points):
         org = (value_range - 1) * math.sin((i * 2 * math.pi)/sample_points)
