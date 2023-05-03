@@ -90,7 +90,8 @@ def startMain():
             if s != None:
                 samples = make_tone(SAMPLE_RATE_IN_HZ, SAMPLE_SIZE_IN_BITS, int(float(s)))
                 #num_written = audio_out.write(samples)
-
+            else:
+                samples = None
                     
 
     except (KeyboardInterrupt, Exception) as e:
