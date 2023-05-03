@@ -77,14 +77,17 @@ samples = None
 def write_Samples():
     global samples
     while True:
-        if samples != None:
-            audio_out.write(samples)
+        try:
+            if samples != None and type(samples) == bytearray:
+                audio_out.write(samples)
+        except Exception as e:
+            print(e, samples, "_____________________________________")
 
 def startMain():
     global samples
     try:
         while True:
-            s = theSignal.getFreq()
+            s = theSignal.getFreq() #e: 440
             #print(s, type(s))
             if s != None: print("_", int(float(s)))
             if s != None:

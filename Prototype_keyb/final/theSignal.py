@@ -25,7 +25,7 @@ def getFreq():
     for row in rows:
         button[0] = rows.index(row)
         deactivate[0] = rows.index(row)
-        makeNull(rows)
+        makeNull(rows) # 0
         row.value(1)
         for col in columns:
             if col.value():
