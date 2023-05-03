@@ -12,7 +12,7 @@ def makeNull(l):
 
 def getNote(n, faze):
     key = n[0] * 6 + n[1] + n[2] * 3 + faze
-    print(key, int(440 * ((2 ** (1/12)) ** key)))
+    #print(key, int(440 * ((2 ** (1/12)) ** key)), key)
     return int(440 * ((2 ** (1/12)) ** key))
 
 #getNote([0, 0, 1], -9)
@@ -34,6 +34,7 @@ def getFreq():
                 for lay in layers:
                     if lay.value():
                         button[2] = layers.index(lay)
+                        print(button)
                         if button not in pressed: pressed.append(button)
                         button = [0,0,0]
                     else:
@@ -48,8 +49,8 @@ def getFreq():
                     if deactivate in pressed:
                         pressed.pop(pressed.index(deactivate))
             
-        #print(pressed)
-        #print(pressed[-1])
-        if len(pressed) > 0: return getNote(pressed[-1], -9)
-        else: return None
+    #print(pressed)
+    #print(pressed[-1])
+    if len(pressed) > 0: return getNote(pressed[-1], -9)
+    else: return None
 
