@@ -88,7 +88,12 @@ class makeOsc:
                 sample += value                                             
             return sample
 
-tri_osc = makeOsc.Triangle(1, 0, 0)
+tri_osc = makeOsc.Triangle(.1, 0, 0)
+sin_osc = makeOsc.Sin(1,0,1)
+sin_osc2 = makeOsc.Sin(1,0,0)
+saw_osc = makeOsc.Saw(.3,0,0)
+squ_osc = makeOsc.Square(1,0,0)
+OSCs = [squ_osc]
 
 def make_tone(rate, bits, frequency):
     # create a buffer containing the pure tone samples
@@ -97,6 +102,7 @@ def make_tone(rate, bits, frequency):
     samples = bytearray(samples_per_cycle * sample_size_in_bytes)
     volume_reduction_factor = 1.5
     range = pow(2, bits) // 2 // volume_reduction_factor
+    sample = 0
     
     if bits == 16:
         format = "<h"
@@ -104,10 +110,12 @@ def make_tone(rate, bits, frequency):
         format = "<l"
     
     for i in range(samples_per_cycle):
-        sample = int(tri_osc.getSample(i, [frequency]) * (range - 1) + (range/2))
+        for osc in OSCs:
+            sample += int((osc.getSample(i, [frequency]) * (range - 1) + (range/2))/ len(OSCs))
         #
         #int(range / 2 + (range - 1) * math.sin(2 * math.pi * i / samples_per_cycle))
         struct.pack_into(format, samples, i * sample_size_in_bytes, sample)
+        sample = 0
         #print(samples)
         
     return samples
