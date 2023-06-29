@@ -82,7 +82,6 @@ class makeOsc:
 
 def OSC(OSCs, fr_array):
     sample = 0
-    global sample_number        # How many samples are going to be generated
     samples_array = []                # Holding the samples in an array
     samples_number = sample_rate // 5000 #math.lcm(fr_array) 
     samples = bytearray(samples_number * byte_res)  # This will hold the samples in byte array

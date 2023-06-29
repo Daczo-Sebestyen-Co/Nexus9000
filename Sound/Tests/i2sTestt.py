@@ -31,7 +31,7 @@ def make_tone(rate, bits, frequency):
         format = "<l"
     
     for i in range(samples_per_cycle):
-        sample = range + int((range - 1) * math.sin(2 * math.pi * i / samples_per_cycle))
+        sample = range/2 + int((range - 1) * math.sin(2 * math.pi * i / samples_per_cycle))
         struct.pack_into(format, samples, i * sample_size_in_bytes, sample)
         print(samples)
         
