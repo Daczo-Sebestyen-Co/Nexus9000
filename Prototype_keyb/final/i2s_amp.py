@@ -69,7 +69,7 @@ class makeOsc:
         def getSample(self, s, fr_array):                     # Sawtooth type generator
             sample = 0                                                    
             for i in range(len(fr_array)):                                    
-                Fr = fr_array[i] * math.pow(step_ratio, self.transpose)               
+                Fr = fr_array[i] * math.pow(step_ratio, self.transpose)               #transposing fr
                 value = self.amp * (abs(((s+self.faze) % (sample_rate/Fr))/(sample_rate/Fr)  * 2 - 1) * 2 - 1  )   
                 sample += value                                             
             return sample
@@ -93,7 +93,7 @@ sin_osc = makeOsc.Sin(1,0,1)
 sin_osc2 = makeOsc.Sin(1,0,0)
 saw_osc = makeOsc.Saw(.3,0,0)
 squ_osc = makeOsc.Square(1,0,0)
-OSCs = [squ_osc]
+OSCs = [saw_osc]
 
 def make_tone(rate, bits, frequency):
     # create a buffer containing the pure tone samples
@@ -112,11 +112,16 @@ def make_tone(rate, bits, frequency):
     for i in range(samples_per_cycle):
         for osc in OSCs:
             sample += int((osc.getSample(i, [frequency]) * (range - 1) + (range/2))/ len(OSCs))
+            #print(osc.amp)
+            osc.amp -= .0001
+            if osc.amp < 0:
+                osc.amp = 0
         #
         #int(range / 2 + (range - 1) * math.sin(2 * math.pi * i / samples_per_cycle))
         struct.pack_into(format, samples, i * sample_size_in_bytes, sample)
         sample = 0
         #print(samples)
+        
         
     return samples
 
@@ -145,25 +150,30 @@ def write_Samples():
         try:
             if samples != None and type(samples) == bytearray:
                 audio_out.write(samples)
-        except Exception as e:
+        except KeyboardInterrupt as e:
             print(e, samples, "_____________________________________")
+
 
 def startMain():
     global samples
     try:
+        lastnote = None
         while True:
-            s = theSignal.getFreq() #e: 440
+            s = theSignal.getFreq() #e: 440 erre átalakítani: [440, 1 (amp)]
+            if s != lastnote:   #decay
+                for osc in OSCs:
+                    osc.amp = 1 #!!! hardcoded
+            lastnote = s
             #print(s, type(s))
-            if s != None: print("_", int(float(s)), s, float(s))
             if s != None:
                 samples = make_tone(SAMPLE_RATE_IN_HZ, SAMPLE_SIZE_IN_BITS, int(float(s)))
                 #num_written = audio_out.write(samples)
             else:
                 samples = None
                     
-
-    except (KeyboardInterrupt, Exception) as e:
-        print("C1", e)
+    except KeyboardInterrupt as e:
+        print("KEYBOARD INTERRUPTION")
+        #_thread.exit()
 
 t1 = _thread.start_new_thread(write_Samples, ())
 startMain()

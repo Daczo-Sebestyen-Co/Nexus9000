@@ -51,6 +51,8 @@ def getFreq():
             
     #print(pressed)
     #print(pressed[-1])
-    if len(pressed) > 0: return getNote(pressed[-1], -9)
+    if len(pressed) > 0: 
+        #print(pressed, deactivate)
+        return getNote(pressed[-1], -9)
     else: return None
 
