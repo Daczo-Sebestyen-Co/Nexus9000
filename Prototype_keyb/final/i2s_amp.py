@@ -97,7 +97,7 @@ OSCs = [saw_osc]
 
 def make_tone(rate, bits, frequency):
     # create a buffer containing the pure tone samples
-    samples_per_cycle = rate // frequency * 20
+    samples_per_cycle = rate // frequency * 2 #!!!!!!!!!!!
     sample_size_in_bytes = bits // 8
     samples = bytearray(samples_per_cycle * sample_size_in_bytes)
     volume_reduction_factor = 1.5
@@ -162,7 +162,7 @@ def startMain():
         lastnote = None
         while True:
             s = theSignal.getFreq() #e: 440 erre átalakítani: [440, 1 (amp)]
-            s = 10000 #!!!!!
+            s = 12000 #!!!!!
             if s != lastnote:   #decay
                 for osc in OSCs:
                     osc.amp = 1 #!!! hardcoded
