@@ -34,7 +34,7 @@ def getFreq():
                 for lay in layers:
                     if lay.value():
                         button[2] = layers.index(lay)
-                        print(button)
+                        #print(button)
                         if button not in pressed: pressed.append(button)
                         button = [0,0,0]
                     else:

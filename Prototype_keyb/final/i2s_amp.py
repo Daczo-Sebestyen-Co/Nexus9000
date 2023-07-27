@@ -88,16 +88,16 @@ class makeOsc:
                 sample += value                                             
             return sample
 
-tri_osc = makeOsc.Triangle(.1, 0, 0)
-sin_osc = makeOsc.Sin(1,0,1)
-sin_osc2 = makeOsc.Sin(1,0,0)
+#tri_osc = makeOsc.Triangle(.1, 0, 0)
+#sin_osc = makeOsc.Sin(1,0,1)
+#sin_osc2 = makeOsc.Sin(1,0,0)
 saw_osc = makeOsc.Saw(.3,0,0)
-squ_osc = makeOsc.Square(1,0,0)
+#squ_osc = makeOsc.Square(1,0,0)
 OSCs = [saw_osc]
 
 def make_tone(rate, bits, frequency):
     # create a buffer containing the pure tone samples
-    samples_per_cycle = rate // frequency
+    samples_per_cycle = rate // frequency * 20
     sample_size_in_bytes = bits // 8
     samples = bytearray(samples_per_cycle * sample_size_in_bytes)
     volume_reduction_factor = 1.5
@@ -113,8 +113,10 @@ def make_tone(rate, bits, frequency):
         for osc in OSCs:
             sample += int((osc.getSample(i, [frequency]) * (range - 1) + (range/2))/ len(OSCs))
             #print(osc.amp)
-            osc.amp -= .0001
+            #osc.amp -= 1 / sample_rate !!!
+
             if osc.amp < 0:
+                print(osc.amp)
                 osc.amp = 0
         #
         #int(range / 2 + (range - 1) * math.sin(2 * math.pi * i / samples_per_cycle))
@@ -150,7 +152,7 @@ def write_Samples():
         try:
             if samples != None and type(samples) == bytearray:
                 audio_out.write(samples)
-        except KeyboardInterrupt as e:
+        except (Exception, KeyboardInterrupt) as e:
             print(e, samples, "_____________________________________")
 
 
@@ -160,13 +162,18 @@ def startMain():
         lastnote = None
         while True:
             s = theSignal.getFreq() #e: 440 erre átalakítani: [440, 1 (amp)]
+            s = 10000 #!!!!!
             if s != lastnote:   #decay
                 for osc in OSCs:
                     osc.amp = 1 #!!! hardcoded
             lastnote = s
             #print(s, type(s))
             if s != None:
+                import time
+                t1 = time.ticks_cpu()
                 samples = make_tone(SAMPLE_RATE_IN_HZ, SAMPLE_SIZE_IN_BITS, int(float(s)))
+                t2 = time.ticks_cpu()
+                print(t1, t2, t2-t1)
                 #num_written = audio_out.write(samples)
             else:
                 samples = None
