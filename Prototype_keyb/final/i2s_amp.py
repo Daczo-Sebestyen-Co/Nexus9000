@@ -95,6 +95,8 @@ saw_osc = makeOsc.Saw(.4,0,0)
 #squ_osc = makeOsc.Square(1,0,0)
 OSCs = [saw_osc]
 
+startamp = saw_osc.amp
+
 attack = 1
 decay = .5
 release = 0
@@ -117,10 +119,11 @@ def make_tone(rate, bits, frequency):
     else:  # assume 32 bits
         format = "<l"
     
+    lastfreq = None
     for i in range(samples_per_cycle):
         for osc in OSCs:
             sample += int((osc.getSample(i, [frequency]) * (range - 1) + (range/2))/ len(OSCs))
-            #print(osc.amp)
+            print(osc.amp, isAttack, isDecay, isRelease)
 
             if isAttack:
                 if osc.amp < attack:
@@ -135,6 +138,23 @@ def make_tone(rate, bits, frequency):
                 else:
                     isDecay = False
                     isRelease = True
+
+            if frequency != lastfreq:
+                if lastfreq != None:
+                    isDecay = False
+                    isRelease = True
+
+            if isRelease:
+                if osc.amp > 0:
+                    osc.amp += releaseSpeed
+                else:
+                    osc.amp = 0
+            
+                    if lastfreq != frequency:
+                        isAttack = True
+                        isRelease = False
+                
+            lastfreq = frequency
             
         #
         #int(range / 2 + (range - 1) * math.sin(2 * math.pi * i / samples_per_cycle))
@@ -177,24 +197,11 @@ def write_Samples():
 def startMain():
     global samples
     try:
-        lastnote = None
         while True:
             s = theSignal.getFreq() #e: 440 erre átalakítani: [440, 1 (amp)]
             #s = 8100 #!!!!!
-            global isRelease, isAttack, isDecay
-            #print(isAttack, isDecay, isRelease, s, lastnote)
-            if s != lastnote:   #decay
-                for osc in OSCs:
-                    if lastnote != None:
-                        isDecay = False
-                        isRelease = True
-                    if isRelease:
-                        if osc.amp > 0:
-                            osc.amp += releaseSpeed
-                    else:
-                        isAttack = True
-                        isRelease = False
-            lastnote = s
+            #print(isAttack, isDecay, isRelease, s, lastfreq)
+            
             #print(s, type(s))
             if s != None:
                 import time
