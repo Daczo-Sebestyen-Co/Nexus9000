@@ -123,7 +123,7 @@ def make_tone(rate, bits, frequency):
     for i in range(samples_per_cycle):
         for osc in OSCs:
             sample += int((osc.getSample(i, [frequency]) * (range - 1) + (range/2))/ len(OSCs))
-            print(osc.amp, isAttack, isDecay, isRelease)
+            print(osc.amp, isAttack, isDecay, isRelease, frequency, lastfreq)
 
             if isAttack:
                 if osc.amp < attack:
@@ -140,7 +140,7 @@ def make_tone(rate, bits, frequency):
                     isRelease = True
 
             if frequency != lastfreq:
-                if lastfreq != None:
+                if frequency == None:
                     isDecay = False
                     isRelease = True
 
@@ -204,10 +204,7 @@ def startMain():
             
             #print(s, type(s))
             if s != None:
-                import time
-                t1 = time.ticks_cpu()
                 samples = make_tone(SAMPLE_RATE_IN_HZ, SAMPLE_SIZE_IN_BITS, int(float(s)))
-                t2 = time.ticks_cpu()
                 #print(t1, t2, t2-t1)
                 #num_written = audio_out.write(samples)
             #else: !!!!!!!!!!!!!!!!!!!!!
