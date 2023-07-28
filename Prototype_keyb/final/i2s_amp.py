@@ -20,14 +20,14 @@ print("yes found it")
 TONE_FREQUENCY_IN_HZ = 440
 SAMPLE_SIZE_IN_BITS = 16
 FORMAT = I2S.MONO  # only MONO supported in this example
-SAMPLE_RATE_IN_HZ = 48_000
+SAMPLE_RATE_IN_HZ = 60_000
 
 sample_rate = SAMPLE_RATE_IN_HZ
 step_ratio = math.pow(2, 1/12)
 
 class makeOsc:
     class Sin:
-        def __init__(self, amp, transpose, faze=0):
+        def __init__(self, amp : float, transpose, faze=0):
             self.amp = amp
             self.transpose = transpose
             self.faze = faze
@@ -41,7 +41,7 @@ class makeOsc:
             return sample
     
     class Square:
-        def __init__(self, amp, transpose, faze=0):
+        def __init__(self, amp : float, transpose, faze=0):
             self.amp = amp
             self.transpose = transpose
             self.faze = faze
@@ -61,7 +61,7 @@ class makeOsc:
             return sample
 
     class Triangle:
-        def __init__(self, amp, transpose, faze=0):
+        def __init__(self, amp : float, transpose, faze=0):
             self.amp = amp
             self.transpose = transpose
             self.faze = faze
@@ -75,7 +75,7 @@ class makeOsc:
             return sample
         
     class Saw:
-        def __init__(self, amp, transpose, faze=0):
+        def __init__(self, amp : float, transpose, faze=0):
             self.amp = amp
             self.transpose = transpose
             self.faze = faze
@@ -91,13 +91,21 @@ class makeOsc:
 #tri_osc = makeOsc.Triangle(.1, 0, 0)
 #sin_osc = makeOsc.Sin(1,0,1)
 #sin_osc2 = makeOsc.Sin(1,0,0)
-saw_osc = makeOsc.Saw(.3,0,0)
+saw_osc = makeOsc.Saw(.4,0,0)
 #squ_osc = makeOsc.Square(1,0,0)
 OSCs = [saw_osc]
 
+attack = 1
+decay = .5
+release = 0
+
+isAttack, isDecay, isRelease = True, False, False
+attackSpeed, decaySpeed, releaseSpeed = 1/sample_rate * 20, -1/sample_rate * 5, -1/sample_rate * 10
+
 def make_tone(rate, bits, frequency):
+    global isAttack, isDecay, isRelease
     # create a buffer containing the pure tone samples
-    samples_per_cycle = rate // frequency * 2 #!!!!!!!!!!!
+    samples_per_cycle = rate // frequency * 1 #!!!!!!!!!!!
     sample_size_in_bytes = bits // 8
     samples = bytearray(samples_per_cycle * sample_size_in_bytes)
     volume_reduction_factor = 1.5
@@ -113,11 +121,21 @@ def make_tone(rate, bits, frequency):
         for osc in OSCs:
             sample += int((osc.getSample(i, [frequency]) * (range - 1) + (range/2))/ len(OSCs))
             #print(osc.amp)
-            #osc.amp -= 1 / sample_rate !!!
 
-            if osc.amp < 0:
-                print(osc.amp)
-                osc.amp = 0
+            if isAttack:
+                if osc.amp < attack:
+                    osc.amp += attackSpeed
+                else:
+                    isAttack = False
+                    isDecay = True
+
+            if isDecay:
+                if osc.amp > decay:
+                    osc.amp += decaySpeed
+                else:
+                    isDecay = False
+                    isRelease = True
+            
         #
         #int(range / 2 + (range - 1) * math.sin(2 * math.pi * i / samples_per_cycle))
         struct.pack_into(format, samples, i * sample_size_in_bytes, sample)
@@ -162,10 +180,20 @@ def startMain():
         lastnote = None
         while True:
             s = theSignal.getFreq() #e: 440 erre átalakítani: [440, 1 (amp)]
-            s = 12000 #!!!!!
+            #s = 8100 #!!!!!
+            global isRelease, isAttack, isDecay
+            #print(isAttack, isDecay, isRelease, s, lastnote)
             if s != lastnote:   #decay
                 for osc in OSCs:
-                    osc.amp = 1 #!!! hardcoded
+                    if lastnote != None:
+                        isDecay = False
+                        isRelease = True
+                    if isRelease:
+                        if osc.amp > 0:
+                            osc.amp += releaseSpeed
+                    else:
+                        isAttack = True
+                        isRelease = False
             lastnote = s
             #print(s, type(s))
             if s != None:
@@ -173,10 +201,10 @@ def startMain():
                 t1 = time.ticks_cpu()
                 samples = make_tone(SAMPLE_RATE_IN_HZ, SAMPLE_SIZE_IN_BITS, int(float(s)))
                 t2 = time.ticks_cpu()
-                print(t1, t2, t2-t1)
+                #print(t1, t2, t2-t1)
                 #num_written = audio_out.write(samples)
-            else:
-                samples = None
+            #else: !!!!!!!!!!!!!!!!!!!!!
+                #samples = None
                     
     except KeyboardInterrupt as e:
         print("KEYBOARD INTERRUPTION")
